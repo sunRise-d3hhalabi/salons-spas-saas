@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 function HomePage() {
@@ -8,7 +9,9 @@ function HomePage() {
     <div className="flex flex-col">
       <div className="flex justify-between items-center bg-gray-200 py-5 px-20">
         <h1 className="text-2xl font-bold! text-black">S . H . E . Y .</h1>
-        <Button>Login</Button>
+        <Button>
+          <Link href="/login">Login</Link>
+        </Button>
       </div>
       <div className="bg-white mt-20 lg:grid-cols-2 grid-cols-1 px-20 min-h-[70vh] items-center grid gap-10">
         <div className="col-span-1 flex flex-col gap-5">
