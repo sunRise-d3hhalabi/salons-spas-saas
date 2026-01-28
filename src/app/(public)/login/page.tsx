@@ -83,6 +83,7 @@ function LoginPage() {
       if (response.success) {
         toast.success("Logged in successfully!");
         Cookies.set("token", response.message);
+        Cookies.set("role", data.role);
         router.push(`/${data.role}/dashboard`);
       } else {
         toast.error(response.message);
