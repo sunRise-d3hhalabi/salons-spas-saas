@@ -38,6 +38,11 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Link from "next/link";
 
+import { loginUser } from "@/actions/users";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import Cookies from "js-cookie";
+
 const roles = [
   {
     id: "r1",
@@ -58,7 +63,9 @@ const formSchema = z.object({
 });
 
 function LoginPage() {
-  //   const roles = ["user", "salon-spa-owner"];
+  const [loading, setLoading] = React.useState(false);
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -68,8 +75,23 @@ function LoginPage() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     console.log(data);
+    try {
+      setLoading(true);
+      const response: any = await loginUser(data);
+      if (response.success) {
+        toast.success("Logged in successfully!");
+        Cookies.set("token", response.message);
+        router.push(`/${data.role}/dashboard`);
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -175,7 +197,7 @@ function LoginPage() {
                 Register
               </Link>
             </div>
-            <Button type="submit" form="form-rhf-demo">
+            <Button type="submit" form="form-rhf-demo" disabled={loading}>
               Submit
             </Button>
           </div>
