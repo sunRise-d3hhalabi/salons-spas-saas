@@ -75,7 +75,7 @@ function LoginPage() {
   return (
     <div className="auth-bg">
       <div className="bg-white p-5 rounded-sm w-[500px]">
-        <h1 className="text-2xl font-bold! text-gray-600">
+        <h1 className="text-xl font-bold! text-gray-600">
           Login to your account
         </h1>
         <hr className="my-7 border-t border-gray-300" />
