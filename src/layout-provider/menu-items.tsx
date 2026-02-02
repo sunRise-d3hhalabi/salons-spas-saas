@@ -21,6 +21,9 @@ import {
   MessageCircle,
   User2,
 } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 interface MenuItemsProps {
   openMenuItems: boolean;
@@ -29,6 +32,20 @@ interface MenuItemsProps {
 }
 
 function MenuItems({ openMenuItems, setOpenMenuItems, user }: MenuItemsProps) {
+  const pathname = usePathname();
+
+  const router = useRouter();
+
+  const onLogout = () => {
+    try {
+      Cookies.remove("token");
+      Cookies.remove("role");
+      router.push("/login");
+      toast.success("Logged out successfully.");
+    } catch (error) {
+      toast.error("An error occurred. Please try again later.");
+    }
+  };
   let userMenuItems = [
     {
       title: "Dashboard",
@@ -59,7 +76,7 @@ function MenuItems({ openMenuItems, setOpenMenuItems, user }: MenuItemsProps) {
       icon: <LayoutDashboard size={13} />,
     },
     {
-      title: "Register/View Salon/Spa",
+      title: "Salons & Spas",
       route: "/salon-spa-owner/salons-spas",
       icon: <List size={13} />,
     },
@@ -90,6 +107,27 @@ function MenuItems({ openMenuItems, setOpenMenuItems, user }: MenuItemsProps) {
         <SheetHeader>
           <SheetTitle></SheetTitle>
         </SheetHeader>
+        <div className="flex flex-col gap-10 mt-20 px-7">
+          {menuItemsToRender.map((menuItem, index) => (
+            <div
+              className={`flex gap-5 items-center p-2 rounded-md cursor-pointer
+      ${
+        pathname === menuItem.route
+          ? "bg-gray-100 border border-gray-500"
+          : "text-gray-500"
+      }
+      `}
+              key={index}
+            >
+              <div className="text-black">{menuItem.icon}</div>
+              <span className="text-sm! text-black">{menuItem.title}</span>
+            </div>
+          ))}
+
+          <Button onClick={onLogout} className="text-white">
+            Logout
+          </Button>
+        </div>
       </SheetContent>
     </Sheet>
   );
