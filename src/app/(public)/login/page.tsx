@@ -58,7 +58,7 @@ const roles = [
 
 const formSchema = z.object({
   email: z.email(),
-  password: z.string().min(8),
+  password: z.string().min(parseInt(process.env.PASSWORD_LENGTH! || "4")),
   role: z.enum(["user", "salon-spa-owner"]),
 });
 
