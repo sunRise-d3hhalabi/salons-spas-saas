@@ -26,6 +26,7 @@ import toast from "react-hot-toast";
 import usersGlobalStore, {
   IUsersGlobalStore,
 } from "@/store/users-global-store";
+import Link from "next/link";
 
 interface MenuItemsProps {
   openMenuItems: boolean;
@@ -120,9 +121,16 @@ function MenuItems({ openMenuItems, setOpenMenuItems }: MenuItemsProps) {
       }
       `}
               key={index}
+              onClick={() => {
+                router.push(menuItem.route);
+                setOpenMenuItems(false);
+              }}
             >
               <div className="text-black">{menuItem.icon}</div>
               <span className="text-sm! text-black">{menuItem.title}</span>
+              {/* <Link href={menuItem.route}>
+                <span className="text-sm! text-black">{menuItem.title}</span>
+              </Link> */}
             </div>
           ))}
 

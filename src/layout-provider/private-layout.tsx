@@ -9,11 +9,15 @@ import ErrorMessage from "@/components/ui/error-message";
 import usersGlobalStore, {
   IUsersGlobalStore,
 } from "@/store/users-global-store";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 function PrivateLayout({ children }: { children: React.ReactNode }) {
   const { user, setUser } = usersGlobalStore() as IUsersGlobalStore;
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
+
+  const router = useRouter();
 
   const fetchUser = async () => {
     try {
@@ -27,6 +31,13 @@ function PrivateLayout({ children }: { children: React.ReactNode }) {
         setError(response.message);
       }
     } catch (error: any) {
+      Cookies.remove("token");
+      Cookies.remove("role");
+
+      toast.error(error.message);
+      router.push("/login");
+      toast.success("Logged out successfully.");      
+
       setError(error.message);
     } finally {
       setLoading(false);
