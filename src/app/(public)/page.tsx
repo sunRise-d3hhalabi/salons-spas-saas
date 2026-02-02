@@ -8,7 +8,7 @@ function HomePage() {
   return (
     <div className="flex flex-col">
       <div className="flex justify-between items-center bg-gray-200 py-5 px-20">
-        <h1 className="text-2xl font-bold! text-black">S . H . E . Y .</h1>
+        <h1 className="text-2xl font-bold! text-black">S . H . E . Y</h1>
         <Button>
           <Link href="/login">Login</Link>
         </Button>

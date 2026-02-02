@@ -1,7 +1,7 @@
 "use server";
 
 import supabase from "@/config/supabase-config";
-import { success } from "zod";
+import { string, success } from "zod";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -118,6 +118,35 @@ export const loginUser = async ({
     return {
       success: true,
       message: token,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
+
+export const getCurrentUser = async (token: string) => {
+  try {
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+    const userId = decoded.id;
+
+    const { data, error } = await supabase
+      .from("user-profiles")
+      .select("*")
+      .eq("id", userId);
+
+    if (!data || data?.length === 0 || error) {
+      return {
+        success: false,
+        message: "User not found!",
+      };
+    }
+
+    return {
+      success: true,
+      data: data[0],      
     };
   } catch (error: any) {
     return {
