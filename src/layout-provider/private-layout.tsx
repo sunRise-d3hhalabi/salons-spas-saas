@@ -5,6 +5,7 @@ import Header from "./header";
 import Cookies from "js-cookie";
 import { getCurrentUser } from "@/actions/users";
 import Loader from "@/components/ui/loader";
+import ErrorMessage from "@/components/ui/error-message";
 
 function PrivateLayout({ children }: { children: React.ReactNode }) {
   const [user = null, setUser] = React.useState(null);
@@ -42,7 +43,7 @@ function PrivateLayout({ children }: { children: React.ReactNode }) {
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <ErrorMessage error={error} />;
   }
 
   return (
