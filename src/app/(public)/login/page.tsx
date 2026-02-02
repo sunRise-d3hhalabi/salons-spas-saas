@@ -3,7 +3,6 @@
 import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-// import { toast } from "sonner"
 import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -56,15 +55,15 @@ const roles = [
   },
 ] as const;
 
-const formSchema = z.object({
-  email: z.email(),
-  password: z.string().min(parseInt(process.env.PASSWORD_LENGTH! || "4")),
-  role: z.enum(["user", "salon-spa-owner"]),
-});
-
 function LoginPage() {
   const [loading, setLoading] = React.useState(false);
   const router = useRouter();
+
+  const formSchema = z.object({
+    email: z.email(),
+    password: z.string().min(parseInt(process.env.PASSWORD_LENGTH! || "4")),
+    role: z.enum(["user", "salon-spa-owner"]),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
