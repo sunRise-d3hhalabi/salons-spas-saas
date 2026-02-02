@@ -1,9 +1,12 @@
-import { IUser } from "@/interfaces";
 import { Menu } from "lucide-react";
 import React from "react";
 import MenuItems from "./menu-items";
+import usersGlobalStore, {
+  IUsersGlobalStore,
+} from "@/store/users-global-store";
 
-function Header({ user }: { user: IUser }) {
+function Header() {
+  const { user } = usersGlobalStore() as IUsersGlobalStore;
   const [openMenuItems, setOpenMenuItems] = React.useState(false);
   return (
     <div className="flex justify-between items-center bg-black! text-white py-5 px-5">
@@ -22,7 +25,6 @@ function Header({ user }: { user: IUser }) {
         <MenuItems
           openMenuItems={openMenuItems}
           setOpenMenuItems={setOpenMenuItems}
-          user={user}
         />
       )}
     </div>
