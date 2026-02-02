@@ -4,6 +4,7 @@ import Header from "./header";
 
 import Cookies from "js-cookie";
 import { getCurrentUser } from "@/actions/users";
+import Loader from "@/components/ui/loader";
 
 function PrivateLayout({ children }: { children: React.ReactNode }) {
   const [user = null, setUser] = React.useState(null);
@@ -17,8 +18,6 @@ function PrivateLayout({ children }: { children: React.ReactNode }) {
       const response = await getCurrentUser(token);
 
       if (response.success) {
-        console.log("XXXXXXXXXXXXXXXXXXXXX");
-        console.log(response.message);
         setUser(response.data);
       } else {
         setError(response.message);
@@ -37,7 +36,7 @@ function PrivateLayout({ children }: { children: React.ReactNode }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        Loading...
+        <Loader />
       </div>
     );
   }
