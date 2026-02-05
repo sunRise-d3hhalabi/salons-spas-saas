@@ -29,6 +29,9 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+
+import { workingDays } from "@/constants";
 
 interface SalonFormProps {
   initialValues?: any;
@@ -342,6 +345,8 @@ function SalonSpaForm({ initialValues, formType }: SalonFormProps) {
       </SelectContent>
     </Select> */}
         </div>
+
+        <div className="p-5 border border-gray-300 rounded-md"></div>
         {/* </FieldGroup> */}
       </form>
     </div>
