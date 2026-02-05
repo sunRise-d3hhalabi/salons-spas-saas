@@ -86,7 +86,7 @@ export const editSalonSpaById = async ({
   }
 };
 
-export const deleteSalonSpaById = async (salon_id: string) => {
+export const deleteSalonSpaById = async (salon_id: number) => {
   try {
     const { data, error } = await supabase
       .from("salons-spas")

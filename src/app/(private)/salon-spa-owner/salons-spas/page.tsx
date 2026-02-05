@@ -1,5 +1,5 @@
 "use client";
-import { getSalonsByOwner } from "@/actions/salon-spas";
+import { deleteSalonSpaById, getSalonsByOwner } from "@/actions/salon-spas";
 import { Button } from "@/components/ui/button";
 import PageTitle from "@/components/ui/page-title";
 import usersGlobalStore, {
@@ -53,6 +53,20 @@ function SalonsSpasList() {
       fetchData();
     }
   }, [user]);
+
+  const deleteSalonSpaHandler = async (id: number) => {
+    try {
+      setLoading(true);
+      const response = await deleteSalonSpaById(id);
+      if (!response.success) throw new Error(response.message);
+      toast.success(response.message);
+      setSalonsSpas((prev) => prev.filter((item) => item.id !== id));
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const columns = [
     "Id",
@@ -115,7 +129,11 @@ function SalonsSpasList() {
                   data-label="actions"
                   className="flex gap-5 items-center"
                 >
-                  <Button variant={"outline"} size={"icon"}>
+                  <Button
+                    variant={"outline"}
+                    size={"icon"}
+                    onClick={() => deleteSalonSpaHandler(item.id)}
+                  >
                     <Trash2 size={14} />
                   </Button>
 
