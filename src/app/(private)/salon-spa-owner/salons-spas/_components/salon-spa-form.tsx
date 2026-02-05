@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
@@ -61,7 +61,7 @@ function SalonSpaForm({ initialValues, formType }: SalonFormProps) {
     address: z.string().nonempty(),
     city: z.string().nonempty(),
     state: z.string().nonempty(),
-    zip: z.string().nonempty(),
+    zip: z.number(),
     working_days: z.array(z.string().nonempty()),
     start_time: z.string().nonempty(),
     end_time: z.string().nonempty(),
@@ -85,7 +85,7 @@ function SalonSpaForm({ initialValues, formType }: SalonFormProps) {
       address: "",
       city: "",
       state: "",
-      zip: "",
+      zip: 0,
       working_days: [],
       start_time: "",
       end_time: "",
@@ -147,6 +147,16 @@ function SalonSpaForm({ initialValues, formType }: SalonFormProps) {
       toast.error(error.message);
     }
   };
+
+  useEffect(() => {
+    if (initialValues) {
+      Object.keys(initialValues).forEach((key: any) => {
+        form.setValue(key, initialValues[key]);
+      });
+    }
+
+    // form.setValue("zip", initialValues.zip.toString());
+  }, [initialValues]);
 
   return (
     <div className="mt-7">
@@ -255,13 +265,14 @@ function SalonSpaForm({ initialValues, formType }: SalonFormProps) {
               </Field>
             )}
           />
+
           <Controller
             name="zip"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="zip" className="font-bold!">
-                  Zip
+                  Minimum Service Price
                 </FieldLabel>
                 <Input
                   {...field}
@@ -269,6 +280,10 @@ function SalonSpaForm({ initialValues, formType }: SalonFormProps) {
                   aria-invalid={fieldState.invalid}
                   placeholder=""
                   autoComplete="off"
+                  type="number"
+                  onChange={(e) => {
+                    form.setValue("zip", parseInt(e.target.value));
+                  }}
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -282,10 +297,7 @@ function SalonSpaForm({ initialValues, formType }: SalonFormProps) {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel
-                  htmlFor="min_service_price"
-                  className="font-bold!"
-                >
+                <FieldLabel htmlFor="min_service_price" className="font-bold!">
                   Minimum Service Price
                 </FieldLabel>
                 <Input
@@ -314,10 +326,7 @@ function SalonSpaForm({ initialValues, formType }: SalonFormProps) {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel
-                  htmlFor="max_service_price"
-                  className="font-bold!"
-                >
+                <FieldLabel htmlFor="max_service_price" className="font-bold!">
                   Maximum Service Price
                 </FieldLabel>
                 <Input
@@ -545,7 +554,12 @@ function SalonSpaForm({ initialValues, formType }: SalonFormProps) {
           <h1>Location</h1>
         </div> */}
         <div className="flex justify-end gap-5">
-          <Button type="button" variant={"outline"} disabled={loading}>
+          <Button
+            type="button"
+            variant={"outline"}
+            disabled={loading}
+            onClick={() => router.push("/salon-spa-owner/salons-spas")}
+          >
             Cancel
           </Button>
 

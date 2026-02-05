@@ -39,7 +39,7 @@ export const getSalonsByOwner = async (owner_id: number) => {
   }
 };
 
-export const getSalonById = async (salon_id: number) => {
+export const getSalonSpaById = async (salon_id: number) => {
   try {
     const { data, error } = await supabase
       .from("salons-spas")
