@@ -34,6 +34,11 @@ import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 
 import { workingDays } from "@/constants";
+import { useRouter } from "next/navigation";
+import usersGlobalStore, {
+  IUsersGlobalStore,
+} from "@/store/users-global-store";
+import { addNewSalonSpa, editSalonSpaById } from "@/actions/salon-spas";
 
 interface SalonFormProps {
   initialValues?: any;
@@ -46,6 +51,10 @@ const offerStatuses = [
 ];
 
 function SalonSpaForm({ initialValues, formType }: SalonFormProps) {
+  const [loading, setLoading] = React.useState(false);
+  const router = useRouter();
+  const { user } = usersGlobalStore() as IUsersGlobalStore;
+
   const formSchema = z.object({
     name: z.string().nonempty(),
     description: z.string().nonempty(),
@@ -58,13 +67,13 @@ function SalonSpaForm({ initialValues, formType }: SalonFormProps) {
     end_time: z.string().nonempty(),
     break_start_time: z.string().nonempty(),
     break_end_time: z.string().nonempty(),
-    minimum_service_price: z.number(),
-    maximum_service_price: z.number(),
+    min_service_price: z.number(),
+    max_service_price: z.number(),
     offer_status: z.string().nonempty(),
     slot_duration: z.number(),
     max_bookings_per_slot: z.number(),
     location_name: z.string(),
-    latitue: z.string(),
+    latitude: z.string(),
     longitude: z.string(),
   });
 
@@ -82,20 +91,46 @@ function SalonSpaForm({ initialValues, formType }: SalonFormProps) {
       end_time: "",
       break_start_time: "",
       break_end_time: "",
-      minimum_service_price: 0,
-      maximum_service_price: 0,
+      min_service_price: 0,
+      max_service_price: 0,
       offer_status: "inactive",
       slot_duration: 0,
       max_bookings_per_slot: 0,
       location_name: "",
-      latitue: "",
+      latitude: "",
       longitude: "",
     },
   });
 
-  async function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
-  }
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      setLoading(true);
+      let response = null;
+
+      if (formType === "add") {
+        response = await addNewSalonSpa({
+          ...values,
+          owner_id: user?.id,
+        });
+      } else {
+        response = await editSalonSpaById({
+          id: initialValues.id,
+          payload: values,
+        }); // Will be implemented in future
+      }
+
+      if (response.success) {
+        toast.success(response.message);
+        router.push("/salon-spa-owner/salons-spas");
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onWorkingDayChange = (day: string) => {
     try {
@@ -243,26 +278,26 @@ function SalonSpaForm({ initialValues, formType }: SalonFormProps) {
           />
 
           <Controller
-            name="minimum_service_price"
+            name="min_service_price"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel
-                  htmlFor="minimum_service_price"
+                  htmlFor="min_service_price"
                   className="font-bold!"
                 >
                   Minimum Service Price
                 </FieldLabel>
                 <Input
                   {...field}
-                  id="minimum_service_price"
+                  id="min_service_price"
                   aria-invalid={fieldState.invalid}
                   placeholder=""
                   autoComplete="off"
                   type="number"
                   onChange={(e) => {
                     form.setValue(
-                      "minimum_service_price",
+                      "min_service_price",
                       parseInt(e.target.value),
                     );
                   }}
@@ -275,26 +310,26 @@ function SalonSpaForm({ initialValues, formType }: SalonFormProps) {
           />
 
           <Controller
-            name="maximum_service_price"
+            name="max_service_price"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel
-                  htmlFor="maximum_service_price"
+                  htmlFor="max_service_price"
                   className="font-bold!"
                 >
                   Maximum Service Price
                 </FieldLabel>
                 <Input
                   {...field}
-                  id="maximum_service_price"
+                  id="max_service_price"
                   aria-invalid={fieldState.invalid}
                   placeholder=""
                   autoComplete="off"
                   type="number"
                   onChange={(e) => {
                     form.setValue(
-                      "maximum_service_price",
+                      "max_service_price",
                       parseInt(e.target.value),
                     );
                   }}
@@ -510,11 +545,13 @@ function SalonSpaForm({ initialValues, formType }: SalonFormProps) {
           <h1>Location</h1>
         </div> */}
         <div className="flex justify-end gap-5">
-          <Button type="button" variant={"outline"}>
+          <Button type="button" variant={"outline"} disabled={loading}>
             Cancel
           </Button>
 
-          <Button type="submit">{formType === "add" ? "Add" : "Update"}</Button>
+          <Button type="submit" disabled={loading} className="cursor-pointer">
+            {formType === "add" ? "Add" : "Update"}
+          </Button>
         </div>
       </form>
     </div>

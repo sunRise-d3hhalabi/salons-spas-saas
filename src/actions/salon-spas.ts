@@ -2,13 +2,13 @@
 
 import supabase from "@/config/supabase-config";
 
-export const createNewSalonSpa = async (payload: any) => {
+export const addNewSalonSpa = async (payload: any) => {
   try {
     const { data, error } = await supabase.from("salons-spas").insert(payload);
     if (error) throw error;
     return {
       success: true,
-      message: "Salon/Spa created successfully",
+      message: "Salon/Spa added successfully",
     };
   } catch (error: any) {
     return {
