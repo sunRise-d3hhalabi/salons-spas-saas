@@ -29,6 +29,7 @@ function PrivateLayout({ children }: { children: React.ReactNode }) {
         setUser(response.data);
       } else {
         setError(response.message);
+        throw error;
       }
     } catch (error: any) {
       Cookies.remove("token");

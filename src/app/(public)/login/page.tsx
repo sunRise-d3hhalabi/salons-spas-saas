@@ -85,7 +85,8 @@ function LoginPage() {
         Cookies.set("role", data.role);
         router.push(`/${data.role}/dashboard`);
       } else {
-        toast.error(response.message);
+        throw response;
+        // toast.error(response.message);
       }
     } catch (error: any) {
       toast.error(error.message);
