@@ -18,7 +18,7 @@ export const addNewSalonSpa = async (payload: any) => {
   }
 };
 
-export const getSalonsByOwner = async (owner_id: string) => {
+export const getSalonsByOwner = async (owner_id: number) => {
   try {
     const { data, error } = await supabase
       .from("salons-spas")
@@ -39,7 +39,7 @@ export const getSalonsByOwner = async (owner_id: string) => {
   }
 };
 
-export const getSalonById = async (salon_id: string) => {
+export const getSalonById = async (salon_id: number) => {
   try {
     const { data, error } = await supabase
       .from("salons-spas")

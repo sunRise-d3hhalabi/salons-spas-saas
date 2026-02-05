@@ -22,11 +22,14 @@ export interface ISalon_Spa {
   end_time: string;
   break_start_time: string;
   break_end_time: string;
-  minimum_service_price: number;
-  maximum_service_price: number;
+  min_service_price: number;
+  max_service_price: number;
+  offer_status: "active" | "inactive";
   slot_duration: number;
   max_bookings_per_slot: number;
   location_name: string;
   latitue: number;
   longitude: number;
+  created_at: string;
+  updated_at: string;
 }
