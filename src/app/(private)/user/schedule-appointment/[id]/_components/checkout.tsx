@@ -11,13 +11,23 @@ function Checkout({ salonSpa }: { salonSpa: ISalon_Spa }) {
   const [date, setDate] = React.useState(new Date());
   const [time, setTime] = React.useState("09:00");
 
-  //temprary
-  const timeOptions = [
-    { label: "9:00 AM", value: "09:00" },
-    { label: "10:00 AM", value: "10:00" },
-    { label: "11:00 AM", value: "11:00" },
-    { label: "12:00 PM", value: "12:00" },
-  ];
+  const timeOptions = [];
+
+  const sampleDate = dayjs(date).format("YYYY-MM-DD");
+
+  let currentSlot = dayjs(`${sampleDate} ${salonSpa.start_time}`);
+  const endTime = dayjs(`${sampleDate} ${salonSpa.end_time}`);
+
+  while (dayjs(currentSlot).isBefore(endTime)) {
+    timeOptions.push({
+      label: dayjs(currentSlot).format("HH:mm"),
+      value: dayjs(currentSlot).format("HH:mm"),
+    } as any);
+
+    currentSlot = dayjs(currentSlot).add(salonSpa.slot_duration, "minute");
+  }
+
+  // filter the slots which are in the break time (Assigment 1)
 
   return (
     <div className="border border-gray-400 flex flex-col gap-5 p-5">
