@@ -25,6 +25,7 @@
     "next": "16.1.5",
     "radix-ui": "^1.4.3",
     "react": "19.2.3",
+    "react-datepicker": "^9.1.0",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.1",
     "react-hot-toast": "^2.6.0",
