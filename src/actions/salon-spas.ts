@@ -106,3 +106,19 @@ export const deleteSalonSpaById = async (salon_id: number) => {
     };
   }
 };
+
+export const getAllSalonSpas = async () => {
+  try {
+    const { data, error } = await supabase.from("salons-spas").select("*");
+    if (error) throw error;
+    return {
+      success: true,
+      data: data,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
