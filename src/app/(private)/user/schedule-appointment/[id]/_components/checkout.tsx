@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { ISalon_Spa } from "@/interfaces";
+import dayjs from "dayjs";
 import React from "react";
 
 import DatePicker from "react-datepicker";
@@ -26,6 +27,11 @@ function Checkout({ salonSpa }: { salonSpa: ISalon_Spa }) {
           selected={date}
           onChange={(value: any) => setDate(value as Date)}
           className="border border-gray-700 p-2"
+          minDate={new Date()}
+          filterDate={(date) => {
+            const day = dayjs(date).format("dddd").toLowerCase();
+            return salonSpa.working_days.includes(day);
+          }}
         />
       </div>
 
