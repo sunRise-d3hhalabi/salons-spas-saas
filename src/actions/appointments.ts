@@ -58,7 +58,8 @@ export const getAppointmentsByOwnerId = async (ownerId: number) => {
     const { data, error } = await supabase
       .from("appointments")
       .select("*")
-      .eq("owner_id", ownerId);
+      .eq("owner_id", ownerId)
+      .order("created_at", { ascending: false });
     if (error) {
       throw new Error(error.message);
     }
@@ -111,6 +112,28 @@ export const getSalonSpaAvailability = async ({
         availableSlots:
           salonSpaData.max_bookings_per_slot - bookedAppointments.length,
       },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
+
+export const updateAppointmentStatus = async (id: number, status: string) => {
+  try {
+    const { data, error } = await supabase
+      .from("appointments")
+      .update({ status })
+      .eq("id", id);
+    if (error) {
+      throw new Error(error.message);
+    }
+    return {
+      success: true,
+      data,
+      message: "Appointment status updated successfully",
     };
   } catch (error: any) {
     return {

@@ -1,5 +1,8 @@
 "use client";
-import { getAppointmentsByUserId } from "@/actions/appointments";
+import {
+  getAppointmentsByUserId,
+  updateAppointmentStatus,
+} from "@/actions/appointments";
 import PageTitle from "@/components/ui/page-title";
 import { IAppointment } from "@/interfaces";
 import usersGlobalStore, {
@@ -21,6 +24,7 @@ import {
 import Loader from "@/components/ui/loader";
 import ErrorMessage from "@/components/ui/error-message";
 import dayjs from "dayjs";
+import { appointmentStatuses } from "@/constants";
 
 function UserAppointmentsList() {
   const [appointments, setAppointments] = React.useState<IAppointment[]>([]);
@@ -59,6 +63,27 @@ function UserAppointmentsList() {
     "Status",
   ];
 
+  const updateStatusHandler = async (id: number, status: string) => {
+    try {
+      setLoading(true);
+      const response = await updateAppointmentStatus(id, status);
+      if (!response.success) throw new Error(response.message);
+
+      toast.success(response.message);
+      const updatedAppointments: any = appointments.map((appointment) => {
+        if (appointment.id === id) {
+          return { ...appointment, status };
+        }
+        return appointment;
+      });
+      setAppointments(updatedAppointments);
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       <PageTitle title="My Appointments" />
@@ -91,7 +116,28 @@ function UserAppointmentsList() {
                   </TableCell>
                   <TableCell data-label="Date">{item.date}</TableCell>
                   <TableCell data-label="Time">{item.time}</TableCell>
-                  <TableCell data-label="Status">{item.status}</TableCell>
+                  <TableCell data-label="Booked On">
+                    {dayjs(item.created_at).format("MMM DD, YYYY hh:mm A")}
+                  </TableCell>
+                  <TableCell data-label="Status">
+                    <select
+                      value={item.status}
+                      className={`border border-gray-400 rounded-md p-1 ${item.status === "cancelled" ? "opacity-50 pointer-events-none" : ""}`}
+                      onChange={(e) =>
+                        updateStatusHandler(item.id, e.target.value)
+                      }
+                      disabled={
+                        dayjs(item.date).isBefore(dayjs(), "day") ||
+                        item.status === "cancelled"
+                      }
+                    >
+                      {appointmentStatuses.map((status) => (
+                        <option key={status.value} value={status.value}>
+                          {status.label}
+                        </option>
+                      ))}
+                    </select>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
