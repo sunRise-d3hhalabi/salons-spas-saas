@@ -1,5 +1,8 @@
 "use client";
-import { bookNewAppointment } from "@/actions/appointments";
+import {
+  bookNewAppointment,
+  getSalonSpaAvailability,
+} from "@/actions/appointments";
 import { Button } from "@/components/ui/button";
 import { ISalon_Spa } from "@/interfaces";
 import usersGlobalStore, {
@@ -18,6 +21,9 @@ function Checkout({ salonSpa }: { salonSpa: ISalon_Spa }) {
   const [time, setTime] = React.useState("09:00");
   const [loading, setLoading] = React.useState(false);
   const { user } = usersGlobalStore() as IUsersGlobalStore;
+  const [availableSlots, setAvailableSlots] = React.useState(0);
+  const [availabilityError, setAvailabilityError] = React.useState("");
+
   const router = useRouter();
 
   const timeOptions = [];
@@ -64,6 +70,33 @@ function Checkout({ salonSpa }: { salonSpa: ISalon_Spa }) {
     }
   };
 
+  const fetchAvailableSlots = async () => {
+    try {
+      const response: any = await getSalonSpaAvailability({
+        date: dayjs(date).format("YYYY-MM-DD"),
+        salonSpaData: salonSpa,
+        time,
+      });
+
+      if (response.success) {
+        setAvailableSlots(response.data?.availableSlots);
+      } else {
+        setAvailableSlots(0);
+        setAvailabilityError(response.message);
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  React.useEffect(() => {
+    if (date && time) {
+      setAvailableSlots(0);
+      setAvailabilityError("");
+      fetchAvailableSlots();
+    }
+  }, [date, time]);
+
   return (
     <div className="border border-gray-400 flex flex-col gap-5 p-5">
       <div className="flex flex-col gap-1">
@@ -98,6 +131,16 @@ function Checkout({ salonSpa }: { salonSpa: ISalon_Spa }) {
         </select>
       </div>
 
+      {availabilityError && (
+        <span className="text-red-700 text-sm">{availabilityError}</span>
+      )}
+
+      {availableSlots > 0 && (
+        <span className="text-green-700 text-sm">
+          {availableSlots} slots available
+        </span>
+      )}
+
       <div className="flex justify-end">
         <Button
           variant={"outline"}
@@ -108,7 +151,7 @@ function Checkout({ salonSpa }: { salonSpa: ISalon_Spa }) {
         </Button>
         <Button
           className="ml-3"
-          disabled={loading}
+          disabled={loading || availableSlots === 0}
           onClick={bookAppointmentHandler}
         >
           Book Appointment
