@@ -11,6 +11,7 @@ export interface IUser {
 
 export interface ISalon_Spa {
   id: number;
+  owner_id: string;
   name: string;
   description: string;
   address: string;

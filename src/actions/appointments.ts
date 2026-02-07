@@ -65,3 +65,5 @@ export const getAppointmentsByOwnerId = async (ownerId: number) => {
     };
   }
 };
+
+

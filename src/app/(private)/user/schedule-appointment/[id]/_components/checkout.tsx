@@ -1,15 +1,24 @@
 "use client";
+import { bookNewAppointment } from "@/actions/appointments";
 import { Button } from "@/components/ui/button";
 import { ISalon_Spa } from "@/interfaces";
+import usersGlobalStore, {
+  IUsersGlobalStore,
+} from "@/store/users-global-store";
 import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import toast from "react-hot-toast";
 
 function Checkout({ salonSpa }: { salonSpa: ISalon_Spa }) {
   const [date, setDate] = React.useState(new Date());
   const [time, setTime] = React.useState("09:00");
+  const [loading, setLoading] = React.useState(false);
+  const { user } = usersGlobalStore() as IUsersGlobalStore;
+  const router = useRouter();
 
   const timeOptions = [];
 
@@ -28,6 +37,32 @@ function Checkout({ salonSpa }: { salonSpa: ISalon_Spa }) {
   }
 
   // filter the slots which are in the break time (Assigment 1)
+
+  const bookAppointmentHandler = async () => {
+    try {
+      setLoading(true);
+      const payload = {
+        user_id: user?.id!,
+        salon_spa_id: salonSpa.id,
+        owner_id: salonSpa.owner_id,
+        date: dayjs(date).format("YYYY-MM-DD"),
+        time,
+        status: "booked",
+      };
+
+      const response = await bookNewAppointment(payload);
+      if (response.success) {
+        toast.success("Appointment booked successfully");
+        router.push("/user/appointments");
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="border border-gray-400 flex flex-col gap-5 p-5">
@@ -64,8 +99,20 @@ function Checkout({ salonSpa }: { salonSpa: ISalon_Spa }) {
       </div>
 
       <div className="flex justify-end">
-        <Button variant={"outline"}>Cancel</Button>
-        <Button className="ml-3">Book Appointment</Button>
+        <Button
+          variant={"outline"}
+          disabled={loading}
+          onClick={() => router.push("/user/schedule-appointment")}
+        >
+          Cancel
+        </Button>
+        <Button
+          className="ml-3"
+          disabled={loading}
+          onClick={bookAppointmentHandler}
+        >
+          Book Appointment
+        </Button>
       </div>
     </div>
   );
