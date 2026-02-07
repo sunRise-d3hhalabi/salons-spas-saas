@@ -62,7 +62,7 @@ function MenuItems({ openMenuItems, setOpenMenuItems }: MenuItemsProps) {
     },
     {
       title: "My Appointments",
-      route: "/user/my-appointments",
+      route: "/user/appointments",
       icon: <List size={13} />,
     },
     {

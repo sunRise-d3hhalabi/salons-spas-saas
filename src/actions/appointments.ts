@@ -27,15 +27,23 @@ export const getAppointmentsByUserId = async (userId: number) => {
   try {
     const { data, error } = await supabase
       .from("appointments")
-      .select("*")
-      .eq("user_id", userId);
+      .select("* , salon_spa_data:salons-spas(id , name)")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
     if (error) {
       throw new Error(error.message);
     }
 
+    // return {
+    //   success: true,
+    //   data: data.map((appointment: any) => ({
+    //     ...appointment,
+    //     salon_spa_data: appointment.salonSpaData,
+    //   })),
+    // };
     return {
       success: true,
-      data,
+      data: data,
     };
   } catch (error: any) {
     return {
